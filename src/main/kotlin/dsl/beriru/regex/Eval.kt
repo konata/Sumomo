@@ -57,9 +57,7 @@ class Parenthesis : Regexp() {
     override fun reduce(): Regexp {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
 }
-
 
 object Word : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean): Boolean {
