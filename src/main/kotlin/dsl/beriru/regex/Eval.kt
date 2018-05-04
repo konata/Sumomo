@@ -19,6 +19,20 @@ sealed class Regexp {
     abstract fun reduce(): Regexp
 }
 
+object fail : Regexp() {
+    override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = false
+    override fun reduce(): Regexp {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
+
+object pass : Regexp() {
+    override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = true
+    override fun reduce(): Regexp {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
+
 
 class Sequential(val left: Regexp, val right: Regexp) : Regexp() {
     override fun reduce(): Regexp {
@@ -68,6 +82,9 @@ object Word : Regexp() {
 }
 
 
+
+// match any digital
+// shorthand -> \d
 object Digital : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -76,6 +93,17 @@ object Digital : Regexp() {
     override fun reduce() = this
 }
 
+
+object Blank : Regexp() {
+    override fun match(target: String, i: Int, cont: (String, Int) -> Boolean): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun reduce(): Regexp {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+}
 
 
 

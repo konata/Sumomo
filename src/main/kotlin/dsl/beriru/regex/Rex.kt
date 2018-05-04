@@ -13,4 +13,3 @@ class Rex(private val pattern: String) {
 
 val String.r
     get() = Rex(this)
-
