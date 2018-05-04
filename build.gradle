@@ -23,8 +23,11 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile 'com.github.h0tk3y.betterParse:better-parse:0.3.3'
 
-    testCompile "org.jetbrains.spek:spek-api:1.1.5"
+    testCompile 'org.jetbrains.spek:spek-api:1.1.2'
+    testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.2'
     testCompile 'org.junit.platform:junit-platform-runner:1.0.0-M4'
+    testCompile 'org.opentest4j:opentest4j:1.0.0-M1'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.0-M4'
 }
 
 compileKotlin {
