@@ -19,14 +19,14 @@ sealed class Regexp {
     abstract fun reduce(): Regexp
 }
 
-object fail : Regexp() {
+object Fail : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = false
     override fun reduce(): Regexp {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
 
-object pass : Regexp() {
+object Pass : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = true
     override fun reduce(): Regexp {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

@@ -107,31 +107,27 @@ object Parser : Grammar<Regexp>() {
     // anything except () [] {} - ^
     // used in character classes as literal value
     private
-    val isolation by (number.map { Exactly(it.text[0]) } or
-            word.map {
-                Word
-            } or
-            digit.map {
-                Digital
-            } or
-            space.map {
-                Blank
-            } or
-            hyphen.map {
-                Exactly(it.text[0])
-            } or
-            escape.map {
-                Exactly(it.text[1])
-            } or
-            literal.map {
-                Exactly(it.text[0])
-            })
+    val isolation by (number.map {
+        Exactly(it.text[0])
+    } or word.map {
+        Word
+    } or digit.map {
+        Digital
+    } or space.map {
+        Blank
+    } or hyphen.map {
+        Exactly(it.text[0])
+    } or escape.map {
+        Exactly(it.text[1])
+    } or literal.map {
+        Exactly(it.text[0])
+    })
 
     // a-b
     // range grammar in choice
     private
     val dashRange by ((number or literal).map { it.text[0] } * -hyphen * (number or literal).map { it.text[0] }) map { (start, end) ->
-        (start..end).reversed().fold(fail) { acc: Regexp, ele ->
+        (start..end).reversed().fold(Fail) { acc: Regexp, ele ->
             Alternative(Exactly(ele), acc)
         }
     }
@@ -140,7 +136,7 @@ object Parser : Grammar<Regexp>() {
     // character class
     private
     val choice by (-lbkt * oneOrMore(dashRange or isolation) * -rbkt) map {
-        it.reversed().fold(fail) { acc: Regexp, ele ->
+        it.reversed().fold(Fail) { acc: Regexp, ele ->
             Alternative(ele, acc)
         }
     }
@@ -156,7 +152,7 @@ object Parser : Grammar<Regexp>() {
     val sequential: Parser<Regexp> by (-optional(caret) * oneOrMore((character or
             choice or parenthesis) * optional(factor))
             ) map {
-        it.reversed().fold(pass) { acc: Regexp, (term, quantifier) ->
+        it.reversed().fold(Pass) { acc: Regexp, (term, quantifier) ->
             Sequential(
                     quantifier?.let { (range, quantifier) ->
                         when (quantifier) {
@@ -174,13 +170,13 @@ object Parser : Grammar<Regexp>() {
     // alternative terms
     private
     val alternative: Parser<Regexp> by separated(sequential, pipe).map {
-        it.terms.reversed().fold(fail) { acc: Regexp, ele ->
+        it.terms.reversed().fold(Fail) { acc: Regexp, ele ->
             Alternative(ele, acc)
         }
     }
 
     private
-    val term by  -optional(caret) * (sequential or alternative) * -optional(dollar)
+    val term by -optional(caret) * (sequential or alternative) * -optional(dollar)
 
     override
     val rootParser by term
