@@ -34,7 +34,7 @@ object pass : Regexp() {
 }
 
 
-class Sequential(val left: Regexp, val right: Regexp) : Regexp() {
+data class Sequential(val left: Regexp, val right: Regexp) : Regexp() {
     override fun reduce(): Regexp {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -44,7 +44,7 @@ class Sequential(val left: Regexp, val right: Regexp) : Regexp() {
     }
 }
 
-class Alternative(val left: Regexp, val right: Regexp) : Regexp() {
+data class Alternative(val left: Regexp, val right: Regexp) : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -55,7 +55,7 @@ class Alternative(val left: Regexp, val right: Regexp) : Regexp() {
 }
 
 
-class Exactly(char: Char) : Regexp() {
+data class Exactly(val char: Char) : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -63,7 +63,8 @@ class Exactly(char: Char) : Regexp() {
     override fun reduce() = this
 }
 
-class Parenthesis : Regexp() {
+
+data class Lazy(val regexp: Regexp, val min: Int = 0, val max: Int = Int.MAX_VALUE) : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -72,6 +73,19 @@ class Parenthesis : Regexp() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
+
+
+data class Greedy(val regexp: Regexp, val min: Int = 0, val max: Int = Int.MAX_VALUE) : Regexp() {
+    override fun match(target: String, i: Int, cont: (String, Int) -> Boolean): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun reduce(): Regexp {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+}
+
 
 object Word : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean): Boolean {
@@ -80,7 +94,6 @@ object Word : Regexp() {
 
     override fun reduce() = this
 }
-
 
 
 // match any digital
@@ -93,7 +106,6 @@ object Digital : Regexp() {
     override fun reduce() = this
 }
 
-
 object Blank : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -102,9 +114,17 @@ object Blank : Regexp() {
     override fun reduce(): Regexp {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
 }
 
+// match anything except line-break
+object Any : Regexp() {
+    override fun reduce(): Regexp {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
+    override fun match(target: String, i: Int, cont: (String, Int) -> Boolean): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
 
 
