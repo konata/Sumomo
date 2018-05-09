@@ -56,7 +56,7 @@ object SumomoSpec : Spek({
         it("email") {
             val ast = """^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$""".r.ast()
             // ok, I'll assume it was right, the ast is so complex
-            println(ast)
+//            println(ast)
         }
     }
 
@@ -78,7 +78,7 @@ object SumomoSpec : Spek({
             assertTrue(ast.match(" 123c"))
             assertTrue(ast.match("1"))
             assertFalse(ast.match("dd"))
-            assertTrue(ast.match("12"))
+            assertTrue(ast.match("19"))
         }
 
         it("common shorthand") {
@@ -86,18 +86,70 @@ object SumomoSpec : Spek({
             assertFalse(atLeast.match("12"))
             assertTrue(atLeast.match("123"))
         }
-    }
 
-    describe("runtime -> fully match test") {
 
-    }
+        it("alternative and concat") {
+            val re = """(abc|d)e""".r
+            assertTrue(re.match("abce"))
+            assertFalse(re.match("abc"))
+        }
 
-    describe("ignore-case match test") {
+        it("fully match") {
 
-    }
+        }
 
-    describe("common use case test") {
+        it("ignore case") {
 
+        }
+
+        it("concat of greedy") {
+            val regex = """\w+(\d*\w)*""".r
+            assertTrue(
+                    regex.match("ww1234")
+            )
+
+            assertFalse(
+                    regex.match("abc12 12")
+            )
+        }
+
+        it("tests") {
+            val r = """^[a-z0-9]+([._\\-]*[a-z0-9])*@""".r
+            assertTrue(
+                    r.match("minmikaze@")
+            )
+
+            val suffix = """([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$""".r
+            assertTrue(
+                    suffix.match("gmail.com")
+            )
+
+            val meaningLess = """(\d+\d*\d+@){1,63}""".r
+            assertTrue(
+                    meaningLess.match("123@")
+            )
+        }
+
+
+        it("common use-case") {
+            val r = """^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$""".r
+
+            assertTrue(
+                    r.match("minamikaze@gmai.com")
+            )
+
+            assertTrue(
+                    r.match("specter-123@163.com")
+            )
+
+            assertFalse(
+                    r.match(".shift@z.com")
+            )
+
+            assertFalse(
+                    r.match("shiftz.com")
+            )
+        }
     }
 })
 

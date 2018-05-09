@@ -19,7 +19,7 @@ object Fail : Regexp() {
 
 // object always success
 object Pass : Regexp() {
-    override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = true
+    override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = cont(target, i)
 }
 
 // basic sequential builder like `abc`
