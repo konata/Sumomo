@@ -4,18 +4,16 @@ import org.jetbrains.spek.api.dsl.*
 import org.junit.Assert.*
 
 object SumomoSpec : Spek({
-    describe("should generate reduced ast") {
-        it("sequantial") {
+    describe("parser") {
+        it("sequential") {
             val ast = "abc".r.ast()
             assertEquals(seq("abc"), ast)
         }
-
 
         it("alternative") {
             val ast = "[abc]".r.ast()
             assertEquals(alt("abc"), ast)
         }
-
 
         it("simple composition") {
             val ast = """abc|nce|[ab](c|d)""".r.ast()
@@ -27,11 +25,8 @@ object SumomoSpec : Spek({
                     )
                     , ast)
         }
-    }
 
-
-    describe("quantifier and parenthesis") {
-        it("should parse lazy with quantifuer") {
+        it("lazy with quantifier") {
             val ast = """\w\dth{1,3}?""".r.ast()
             assertEquals(
                     seq(Word, Digital, e('t'), lzy(e('h'), 1, 3)),
@@ -39,7 +34,7 @@ object SumomoSpec : Spek({
             )
         }
 
-        it("should parser") {
+        it("complex regex") {
             val pattern = """\s[abc]?|\w?|\d?|a{,9}(abc|\d?)?+""".r.ast()
             assertEquals(
                     alt(
@@ -57,41 +52,52 @@ object SumomoSpec : Spek({
                     , pattern
             )
         }
-    }
 
-
-    describe("common use case") {
-        it("should parse email ") {
+        it("email") {
             val ast = """^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$""".r.ast()
+            // ok, I'll assume it was right, the ast is so complex
             println(ast)
         }
     }
 
-
-
-    describe("runtime -> partial match") {
-        it("should match sequential") {
+    describe("runtime") {
+        it("sequential") {
             assertTrue("""niceboat""".r.match("niceboat"))
         }
 
-        it("should not match when length not enough") {
+        it("length not enough") {
             assertFalse("niceboat".r.match("nice"))
         }
 
-        it("should match partitial") {
+        it("partial") {
             assertTrue("nice".r.match("niceboat"))
         }
 
-
-        it("should match alternative and shorthand") {
+        it("alternative and shorthand") {
             val ast = """\s\d{3,}[a-d]|\d+""".r
             assertTrue(ast.match(" 123c"))
             assertTrue(ast.match("1"))
-
+            assertFalse(ast.match("dd"))
+            assertTrue(ast.match("12"))
         }
+
+        it("common shorthand") {
+            val atLeast = """.{3,}""".r
+            assertFalse(atLeast.match("12"))
+            assertTrue(atLeast.match("123"))
+        }
+    }
+
+    describe("runtime -> fully match test") {
 
     }
 
+    describe("ignore-case match test") {
 
+    }
+
+    describe("common use case test") {
+
+    }
 })
 

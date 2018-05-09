@@ -2,16 +2,26 @@ package dsl.sumomo.regex
 
 import com.github.h0tk3y.betterParse.lexer.DefaultTokenizer
 
-class Sumomo(private val pattern: String) {
+class Sumomo(private val pattern: String, private val partial: Boolean = true, private val ignoreCase: Boolean = false) {
     fun token() = DefaultTokenizer(Parser.tokens).tokenize(pattern).joinToString()
     fun ast() = Parser.parse(pattern)
-    fun match(subject: String, partial: Boolean = true) = ast().match(subject, 0) { subject, pos ->
+    fun match(subject: String) = ast().match(subject, 0) { subject, pos ->
         if (partial) true else pos == subject.length - 1
     }
 }
 
 val String.r
     get() = Sumomo(this)
+
+val String.rg
+    get() = Sumomo(this, false)
+
+val String.ri
+    get() = Sumomo(this, true, true)
+
+val String.rgi
+    get() = Sumomo(this, false, true)
+
 
 fun alt(vararg remain: Regexp) = remain.reversed().fold(Fail) { ele: Regexp, acc ->
     Alternative(acc, ele)
