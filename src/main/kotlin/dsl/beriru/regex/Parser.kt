@@ -43,7 +43,7 @@ object Parser : Grammar<Regexp>() {
     private val asterisk by token("""\*""")
     private val plus by token("""\+""")
     // escape chars
-    private val escape by token("""\.""")
+    private val escape by token("""\\.""")
     // meta token
     private val number by token("""\d""")
     private val literal by token("""[^(\[\]){}*+?|^$\d\-]""")
@@ -122,6 +122,8 @@ object Parser : Grammar<Regexp>() {
         Exactly(it.text[0])
     } or escape.map {
         Exactly(it.text[1])
+    } or period.map {
+        Exactly(it.text[0])
     } or literal.map {
         Exactly(it.text[0])
     })
@@ -130,17 +132,18 @@ object Parser : Grammar<Regexp>() {
     // range grammar in choice
     private
     val dashRange by ((number or literal).map { it.text[0] } * -hyphen * (number or literal).map { it.text[0] }) map { (start, end) ->
-        (start..end).reversed().fold(Fail) { acc: Regexp, ele ->
-            Alternative(Exactly(ele), acc)
-        }
+        Range(start, end)
     }
 
     // [ab\dc-z]
     // character class
     private
     val choice by (-lbkt * oneOrMore(dashRange or isolation) * -rbkt) map {
-        it.reversed().fold(Fail) { acc: Regexp, ele ->
-            Alternative(ele, acc)
+        when {
+            it.size == 1 -> it[0]
+            else -> it.reversed().fold(Fail) { acc: Regexp, ele ->
+                Alternative(ele, acc)
+            }
         }
     }
 
@@ -155,34 +158,47 @@ object Parser : Grammar<Regexp>() {
     val sequential: Parser<Regexp> by (-optional(caret) * oneOrMore((character or
             choice or parenthesis) * optional(factor))
             ) map {
-        println("sequential $it")
-        it.reversed().fold(Pass) { acc: Regexp, (term, quantifier) ->
-            Sequential(
-                    quantifier?.let { (range, quantifier) ->
-                        when (quantifier) {
-                            Greedy, Possessive -> Greedy(term, range.first, range.last)
-                            Laziness -> Lazy(term, range.first, range.last)
-                        }
-                    } ?: term
-                    ,
-                    acc
-            )
+
+        when (it.size) {
+            1 -> it[0].let { (term, quantifier) ->
+                quantifier?.let { (range, quantifier) ->
+                    when (quantifier) {
+                        Greedy, Possessive -> Greedy(term, range.first, range.last)
+                        Laziness -> Lazy(term, range.first, range.last)
+                    }
+                } ?: term
+            }
+            else -> it.reversed().fold(Pass) { acc: Regexp, (term, quantifier) ->
+                Sequential(
+                        quantifier?.let { (range, quantifier) ->
+                            when (quantifier) {
+                                Greedy, Possessive -> Greedy(term, range.first, range.last)
+                                Laziness -> Lazy(term, range.first, range.last)
+                            }
+                        } ?: term
+                        ,
+                        acc
+                )
+            }
         }
+
+
     }
 
     // abc|123|seq
     // alternative terms
     private
     val alternative: Parser<Regexp> by separated(sequential, pipe).map {
-        println("alt $it")
-        it.terms.reversed().fold(Fail) { acc: Regexp, ele ->
-            Alternative(ele, acc)
+        when (it.terms.size) {
+            1 -> it.terms[0]
+            else -> it.terms.reversed().fold(Fail) { acc: Regexp, ele ->
+                Alternative(ele, acc)
+            }
         }
     }
 
     private
-//    val term by (-optional(caret) * (sequential or alternative) * -optional(dollar))
-    val term by (alternative or sequential)
+    val term by -optional(caret)  * (alternative or sequential) * -optional(dollar)
 
     override
     val rootParser by term

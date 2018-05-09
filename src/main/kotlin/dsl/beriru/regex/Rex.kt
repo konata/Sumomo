@@ -1,6 +1,5 @@
 package dsl.beriru.regex
 
-import com.github.h0tk3y.betterParse.grammar.parseToEnd
 import com.github.h0tk3y.betterParse.lexer.DefaultTokenizer
 
 class Rex(private val pattern: String) {
@@ -18,11 +17,15 @@ fun alt(vararg remain: Regexp) = remain.reversed().fold(Fail) { ele: Regexp, acc
     Alternative(acc, ele)
 }
 
+fun alt(remain: String) = remain.toCharArray().map(::e).reversed().fold(Fail) { ele: Regexp, acc ->
+    Alternative(acc, ele)
+}
+
 fun seq(vararg remain: Regexp) = remain.reversed().fold(Pass) { ele: Regexp, acc ->
     Sequential(acc, ele)
 }
 
-fun seq(str : String) = str.toCharArray().map(::e).reversed().fold(Pass) { ele: Regexp, acc ->
+fun seq(str: String) = str.toCharArray().map(::e).reversed().fold(Pass) { ele: Regexp, acc ->
     Sequential(acc, ele)
 }
 

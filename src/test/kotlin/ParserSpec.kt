@@ -4,46 +4,66 @@ import org.jetbrains.spek.api.dsl.*
 import org.junit.Assert.assertEquals
 
 object ParserSpec : Spek({
-    describe("sequential parser") {
-        it("should parse") {
-            val pattern = """\w\dth{1,3}?"""
-//            assertEquals(
-//                    seq(Word, Digital, e('t'), lzy(e('h'), 1, 3)),
-//                    pattern.r.ast()
-//            )
+    describe("should generate reduced ast") {
+        it("sequantial") {
+            val ast = "abc".r.ast()
+            assertEquals(seq("abc"), ast)
         }
-    }
 
 
-    describe("alternative parser") {
-        it("should parser") {
-//            val pattern = """\s[abc]?|\w?|\d?|a{,9}(abc|\d?)?+ """
-            val pattern = """\w|\d|def""".r
-            println(pattern.token())
+        it("alternative") {
+            val ast = "[abc]".r.ast()
+            assertEquals(alt("abc"), ast)
+        }
+
+
+        it("simple composition") {
+            val ast = """abc|nce|[ab](c|d)""".r.ast()
             assertEquals(
-                    alt(Word,Digital, seq("def")),
-                    pattern.ast()
+                    alt(
+                            seq("abc"),
+                            seq("nce"),
+                            seq(alt("ab"), alt("cd"))
+                    )
+                    , ast)
+        }
+    }
+
+
+    describe("quantifier and parenthesis") {
+        it("should parse lazy with quantifuer") {
+            val ast = """\w\dth{1,3}?""".r.ast()
+            assertEquals(
+                    seq(Word, Digital, e('t'), lzy(e('h'), 1, 3)),
+                    ast
             )
+        }
 
+        it("should parser") {
+            val pattern = """\s[abc]?|\w?|\d?|a{,9}(abc|\d?)?+""".r.ast()
+            assertEquals(
+                    alt(
+                            seq(Blank, grd(alt("abc"), 0, 1)),
+                            grd(Word, 0, 1),
+                            grd(Digital, 0, 1),
+                            seq(
+                                    grd(e('a'), 0, 9),
+                                    grd(alt(
+                                            seq("abc"),
+                                            grd(Digital, 0, 1)
+                                    ), 0, 1)
+                            )
+                    )
+                    , pattern
+            )
         }
     }
 
 
-    describe("meta test") {
-        it("should pass") {
-
-        }
-    }
-
-
-
-    describe("parsing random grammar") {
-        it("should parser random grammar") {
-            val rex = """^[\w\da-b12]+@[\w0-2_-]+(\\.[ae\s_-]+)+$""".r
-//            val rex = """[1-3\dab-]+@""".r
-//            val rex = """(\w)+(\.\w+)*@(\w)+((\.\w+)+)""".r
-//            println(rex.token())
-//            println(rex.ast())
+    describe("common use case") {
+        it("should parse email ") {
+            val ast = """^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$""".r.ast()
+            println(ast)
         }
     }
 
