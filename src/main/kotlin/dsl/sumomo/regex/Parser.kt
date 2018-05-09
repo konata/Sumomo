@@ -180,8 +180,6 @@ object Parser : Grammar<Regexp>() {
                 )
             }
         }
-
-
     }
 
     // abc|123|seq

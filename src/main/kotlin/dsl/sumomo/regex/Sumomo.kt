@@ -5,8 +5,8 @@ import com.github.h0tk3y.betterParse.lexer.DefaultTokenizer
 class Sumomo(private val pattern: String) {
     fun token() = DefaultTokenizer(Parser.tokens).tokenize(pattern).joinToString()
     fun ast() = Parser.parse(pattern)
-    fun match(subject: String) = ast().match(subject, 0) { _, _ ->
-        true
+    fun match(subject: String, partial: Boolean = true) = ast().match(subject, 0) { subject, pos ->
+        if (partial) true else pos == subject.length - 1
     }
 }
 

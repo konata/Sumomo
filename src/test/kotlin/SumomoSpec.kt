@@ -1,7 +1,7 @@
 import dsl.sumomo.regex.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 
 object SumomoSpec : Spek({
     describe("should generate reduced ast") {
@@ -65,6 +65,31 @@ object SumomoSpec : Spek({
             val ast = """^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$""".r.ast()
             println(ast)
         }
+    }
+
+
+
+    describe("runtime -> partial match") {
+        it("should match sequential") {
+            assertTrue("""niceboat""".r.match("niceboat"))
+        }
+
+        it("should not match when length not enough") {
+            assertFalse("niceboat".r.match("nice"))
+        }
+
+        it("should match partitial") {
+            assertTrue("nice".r.match("niceboat"))
+        }
+
+
+        it("should match alternative and shorthand") {
+            val ast = """\s\d{3,}[a-d]|\d+""".r
+            assertTrue(ast.match(" 123c"))
+            assertTrue(ast.match("1"))
+
+        }
+
     }
 
 
