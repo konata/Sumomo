@@ -1,4 +1,4 @@
-package dsl.beriru.regex
+package dsl.sumomo.regex
 
 
 sealed class Regexp {

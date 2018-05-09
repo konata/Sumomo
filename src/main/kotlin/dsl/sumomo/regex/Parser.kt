@@ -1,12 +1,11 @@
-package dsl.beriru.regex
+package dsl.sumomo.regex
 
 import com.github.h0tk3y.betterParse.combinators.*
 import com.github.h0tk3y.betterParse.grammar.*
 import com.github.h0tk3y.betterParse.lexer.TokenMatch
 import com.github.h0tk3y.betterParse.parser.*
 import com.github.h0tk3y.betterParse.parser.Parser
-import dsl.beriru.regex.Parser.Quantifier.*
-import dsl.beriru.regex.Parser.Quantifier.Greedy
+import dsl.sumomo.regex.Parser.Quantifier.*
 
 
 object Parser : Grammar<Regexp>() {
@@ -198,7 +197,7 @@ object Parser : Grammar<Regexp>() {
     }
 
     private
-    val term by -optional(caret)  * (alternative or sequential) * -optional(dollar)
+    val term by -optional(caret) * (alternative or sequential) * -optional(dollar)
 
     override
     val rootParser by term

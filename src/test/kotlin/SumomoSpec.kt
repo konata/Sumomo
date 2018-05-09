@@ -1,9 +1,9 @@
-import dsl.beriru.regex.*
+import dsl.sumomo.regex.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
 import org.junit.Assert.assertEquals
 
-object ParserSpec : Spek({
+object SumomoSpec : Spek({
     describe("should generate reduced ast") {
         it("sequantial") {
             val ast = "abc".r.ast()
