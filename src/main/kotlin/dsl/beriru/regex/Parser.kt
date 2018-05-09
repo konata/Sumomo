@@ -2,6 +2,8 @@ package dsl.beriru.regex
 
 import com.github.h0tk3y.betterParse.combinators.*
 import com.github.h0tk3y.betterParse.grammar.*
+import com.github.h0tk3y.betterParse.lexer.TokenMatch
+import com.github.h0tk3y.betterParse.parser.*
 import com.github.h0tk3y.betterParse.parser.Parser
 import dsl.beriru.regex.Parser.Quantifier.*
 import dsl.beriru.regex.Parser.Quantifier.Greedy
@@ -45,6 +47,7 @@ object Parser : Grammar<Regexp>() {
     // meta token
     private val number by token("""\d""")
     private val literal by token("""[^(\[\]){}*+?|^$\d\-]""")
+    private val eof by token("""\Z""")
 
 
     private val numbers by oneOrMore(number).map {
@@ -152,6 +155,7 @@ object Parser : Grammar<Regexp>() {
     val sequential: Parser<Regexp> by (-optional(caret) * oneOrMore((character or
             choice or parenthesis) * optional(factor))
             ) map {
+        println("sequential $it")
         it.reversed().fold(Pass) { acc: Regexp, (term, quantifier) ->
             Sequential(
                     quantifier?.let { (range, quantifier) ->
@@ -170,14 +174,18 @@ object Parser : Grammar<Regexp>() {
     // alternative terms
     private
     val alternative: Parser<Regexp> by separated(sequential, pipe).map {
+        println("alt $it")
         it.terms.reversed().fold(Fail) { acc: Regexp, ele ->
             Alternative(ele, acc)
         }
     }
 
     private
-    val term by -optional(caret) * (sequential or alternative) * -optional(dollar)
+//    val term by (-optional(caret) * (sequential or alternative) * -optional(dollar))
+    val term by (alternative or sequential)
 
     override
     val rootParser by term
+
+    fun parse(input: String) = (rootParser * -eof).parseToEnd(tokenizer.tokenize(input) + TokenMatch(eof, "", 0, 0, 0))
 }
