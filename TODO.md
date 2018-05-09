@@ -13,6 +13,7 @@
 3. reduce pass and fail for unnecessary sequential and alternative node (DONE)
 4. range should be expressed lazily
 5. support `.` literal in []
+6. backtrace when IndexOutOfRange happen in subroutine
 
 
 
