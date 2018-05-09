@@ -96,6 +96,7 @@ object SumomoSpec : Spek({
 
         it("fully match") {
 
+
         }
 
         it("ignore case") {
@@ -108,18 +109,18 @@ object SumomoSpec : Spek({
                     regex.match("ww1234")
             )
 
-            assertFalse(
+            assertTrue(
                     regex.match("abc12 12")
             )
         }
 
-        it("tests") {
+        it("random test") {
             val r = """^[a-z0-9]+([._\\-]*[a-z0-9])*@""".r
             assertTrue(
                     r.match("minmikaze@")
             )
 
-            val suffix = """([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$""".r
+            val suffix = """([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+""".r
             assertTrue(
                     suffix.match("gmail.com")
             )

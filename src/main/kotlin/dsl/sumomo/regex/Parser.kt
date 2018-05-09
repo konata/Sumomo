@@ -86,9 +86,7 @@ object Parser : Grammar<Regexp>() {
     }
 
     // chars outside square bracket
-    private val character by dollar.map {
-        Exactly(it.text[0])
-    } or period.map {
+    private val character by period.map {
         Any
     } or hyphen.map {
         Exactly(it.text[0])
