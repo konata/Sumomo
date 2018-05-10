@@ -104,7 +104,7 @@ object Parser : Grammar<Regexp>() {
         Exactly(it.text[0])
     }
 
-    // anything except () [] {} - ^
+    // anything except `(` `)` `[` `]` `{` `}` `-` `^`
     // used in character classes as literal value
     private
     val isolation by (number.map {
@@ -125,14 +125,14 @@ object Parser : Grammar<Regexp>() {
         Exactly(it.text[0])
     })
 
-    // a-b
+    // `a-b`
     // range grammar in choice
     private
     val dashRange by ((number or literal).map { it.text[0] } * -hyphen * (number or literal).map { it.text[0] }) map { (start, end) ->
         Range(start, end)
     }
 
-    // [ab\dc-z]
+    // `[ab\dc-z]`
     // character class
     private
     val choice by (-lbkt * oneOrMore(dashRange or isolation) * -rbkt) map {
@@ -149,7 +149,7 @@ object Parser : Grammar<Regexp>() {
     private
     val parenthesis: Parser<Regexp> by -lpar * parser(this::term) * -rpar
 
-    // abc\w{1,3}.[ab\wc-z](abc|123){3,4}?
+    // `abc\w{1,3}.[ab\wc-z](abc|123){3,4}?`
     // sequential term
     private
     val sequential: Parser<Regexp> by (-optional(caret) * oneOrMore((character or
@@ -180,7 +180,7 @@ object Parser : Grammar<Regexp>() {
         }
     }
 
-    // abc|123|seq
+    // `abc|123|seq`
     // alternative terms
     private
     val alternative: Parser<Regexp> by separated(sequential, pipe).map {

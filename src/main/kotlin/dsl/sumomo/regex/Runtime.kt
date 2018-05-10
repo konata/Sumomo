@@ -36,7 +36,7 @@ data class Range(private val start: Char, private val end: Char) : Regexp() {
             target[i] in start..end && cont(target, i + 1)
 }
 
-// alternative sign [abc] or a|b
+// alternative sign `[abc]` or `a|b`
 data class Alternative(private val left: Regexp, private val right: Regexp) : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = super.match(target, i, cont) &&
             (left.match(target, i, cont) || right.match(target, i, cont))
@@ -78,28 +78,28 @@ data class Greedy(private val regexp: Regexp, private val min: Int = 0, private 
 }
 
 // match any word
-// shorthand -> \w
+// shorthand -> `\w`
 object Word : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = super.match(target, i, cont) &&
             target[i] in word && cont(target, i + 1)
 }
 
 // match any digital
-// shorthand -> \d
+// shorthand -> `\d`
 object Digital : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = super.match(target, i, cont) &&
             target[i] in digit && cont(target, i + 1)
 }
 
 // match any blank
-// shorthand -> \s
+// shorthand -> `\s`
 object Blank : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = super.match(target, i, cont) &&
             target[i].toString().isBlank() && cont(target, i + 1)
 }
 
 // match anything except line-break
-// shorthand -> .
+// shorthand -> `.`
 object Any : Regexp() {
     override fun match(target: String, i: Int, cont: (String, Int) -> Boolean) = super.match(target, i, cont) &&
             cont(target, i + 1)
