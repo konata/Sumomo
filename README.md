@@ -1,4 +1,4 @@
-Sumomo
+Sumomo [![Build Status](https://travis-ci.org/lolicon/Sumomo.svg?branch=master)](https://travis-ci.org/lihaoyi/Sumomo)
 ======
 **Sumomo** is a [regular-expression](https://en.wikipedia.org/wiki/Regular_expression) parsing and evaluating library implemented in pure [kotlin](http://kotlinlang.org/)
 
