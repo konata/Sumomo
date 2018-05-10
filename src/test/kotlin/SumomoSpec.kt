@@ -1,9 +1,9 @@
 import dsl.sumomo.regex.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.*
-import org.junit.Assert.*
+import kotlin.test.*
 
-object SumomoSpec : Spek({
+class SumomoSpec : Spek({
     describe("parser") {
         it("sequential") {
             val ast = "abc".r.ast
