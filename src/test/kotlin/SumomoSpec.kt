@@ -6,17 +6,17 @@ import org.junit.Assert.*
 object SumomoSpec : Spek({
     describe("parser") {
         it("sequential") {
-            val ast = "abc".r.ast()
+            val ast = "abc".r.ast
             assertEquals(seq("abc"), ast)
         }
 
         it("alternative") {
-            val ast = "[abc]".r.ast()
+            val ast = "[abc]".r.ast
             assertEquals(alt("abc"), ast)
         }
 
         it("simple composition") {
-            val ast = """abc|nce|[ab](c|d)""".r.ast()
+            val ast = """abc|nce|[ab](c|d)""".r.ast
             assertEquals(
                     alt(
                             seq("abc"),
@@ -27,7 +27,7 @@ object SumomoSpec : Spek({
         }
 
         it("lazy with quantifier") {
-            val ast = """\w\dth{1,3}?""".r.ast()
+            val ast = """\w\dth{1,3}?""".r.ast
             assertEquals(
                     seq(Word, Digital, e('t'), lzy(e('h'), 1, 3)),
                     ast
@@ -35,7 +35,7 @@ object SumomoSpec : Spek({
         }
 
         it("complex regex") {
-            val pattern = """\s[abc]?|\w?|\d?|a{,9}(abc|\d?)?+""".r.ast()
+            val pattern = """\s[abc]?|\w?|\d?|a{,9}(abc|\d?)?+""".r.ast
             assertEquals(
                     alt(
                             seq(Blank, grd(alt("abc"), 0, 1)),
@@ -54,7 +54,7 @@ object SumomoSpec : Spek({
         }
 
         it("email") {
-            val ast = """^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$""".r.ast()
+            val ast = """^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$""".r.ast
             // ok, I'll assume it was right, the ast is so complex
 //            println(ast)
         }
